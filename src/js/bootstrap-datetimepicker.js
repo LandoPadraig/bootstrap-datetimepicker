@@ -23,6 +23,10 @@
  * limitations under the License.
  * =========================================================
  */
+/*
+   Date:          Author:  Comments:
+   19th Aug 2013  pcooney  #16223 New date picker
+*/
 
 (function($) {
 
@@ -337,8 +341,10 @@
     fillDow: function() {
       var dowCnt = this.weekStart;
       var html = $('<tr>');
+      var dowIndex = 0;
       while (dowCnt < this.weekStart + 7) {
-        html.append('<th class="dow">' + dates[this.language].daysMin[(dowCnt++) % 7] + '</th>');
+        dowIndex = (dowCnt++) % 7;
+        html.append('<th id="dow' + dowIndex + '" class="dow">' + dates[this.language].daysMin[dowIndex] + '</th>');
       }
       this.widget.find('.datepicker-days thead').append(html);
     },
@@ -391,10 +397,12 @@
       var html = [];
       var row;
       var clsName;
+      var colIndex = 0;
       while (prevMonth.valueOf() < nextMonth) {
         if (prevMonth.getUTCDay() === this.weekStart) {
           row = $('<tr>');
           html.push(row);
+          colIndex = 0;
         }
         clsName = '';
         if (prevMonth.getUTCFullYear() < year ||
@@ -415,8 +423,17 @@
         if (prevMonth.valueOf() > this.endDate) {
           clsName += ' disabled';
         }
-        row.append('<td class="day' + clsName + '">' + prevMonth.getUTCDate() + '</td>');
+        var headers;
+        if (colIndex == 0) {
+          headers = "dow0 prev";
+        } else if (colIndex == 6) {
+          headers = "dow6 next";
+        } else {
+          headers = "dow" + colIndex + " switch";
+        }
+        row.append('<td headers="' + headers + '" class="day' + clsName + '">' + prevMonth.getUTCDate() + '</td>');
         prevMonth.setUTCDate(prevMonth.getUTCDate() + 1);
+        colIndex++;
       }
       this.widget.find('.datepicker-days tbody').empty().append(html);
       var currentYear = this._date.getUTCFullYear();
@@ -1214,9 +1231,9 @@
     headTemplate:
       '<thead>' +
         '<tr>' +
-          '<th class="prev">&lsaquo;</th>' +
-          '<th colspan="5" class="switch"></th>' +
-          '<th class="next">&rsaquo;</th>' +
+          '<th id="prev" class="prev">&lsaquo;</th>' +
+          '<th id="switch" colspan="5" class="switch"></th>' +
+          '<th id="next" class="next">&rsaquo;</th>' +
         '</tr>' +
       '</thead>',
     contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>'
