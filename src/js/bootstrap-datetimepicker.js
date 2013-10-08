@@ -24,9 +24,6 @@
  * =========================================================
  */
 /*
-   Date:          Author:  Comments:
-   19th Aug 2013  pcooney  #16223 New date picker
-*/
 
 (function($) {
 
